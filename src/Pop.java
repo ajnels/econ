@@ -1,20 +1,32 @@
+import java.util.Iterator;
+import java.util.Set;
+
 public class Pop {
 
-    protected double foodAmount = 0;
-    protected double foodMax = 5;
+    protected Stockpile stockpile;
+
+    protected Stockpile needs;
 
     protected GoodsProducer job;
 
-    public double getFoodAmount() {
-        return foodAmount;
+    public Pop () {
+        this.stockpile = new Stockpile();
+
+        this.needs = new Stockpile();
+        this.needs.addStock(new Good("Food"), 5);
+        this.needs.addStock(new Good("Beer"), 10);
+        this.needs.addStock(new Good("Clothing"), 10);
     }
 
-    public void setFoodAmount (double foodAmount) {
-        this.foodAmount = foodAmount;
-    }
-
-    public double getFoodNeeded() {
-        return this. foodMax - this.foodAmount;
+    public void buyNeeds (Stockpile stockpile) {
+        Set<String> needTypes = this.needs.getGoodTypes();
+        for (String needType : needTypes) {
+            double needCount = this.stockpile.getStockCount(needType);
+            double needLimit = this.needs.getStockCount(needType);
+            if (needCount < needLimit) {
+                this.stockpile.addStock(needType, stockpile.takeStock(needType, needLimit - needCount));
+            }
+        }
     }
 
     public GoodsProducer getJob () {
@@ -27,6 +39,10 @@ public class Pop {
 
     public void setJob(GoodsProducer job) {
         this.job = job;
+    }
+
+    public String toString () {
+        return "Stock: " + stockpile + "  Needs: " + needs;
     }
 
 }

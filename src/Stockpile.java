@@ -1,11 +1,20 @@
 import java.util.HashMap;
+import java.util.Set;
 
 public class Stockpile {
 
-    HashMap<String, Double> stockpile = new HashMap<String, Double>();
+    protected HashMap<String, Double> stockpile = new HashMap<String, Double>();
 
     public void addStock (Good good, double amount) {
         String goodName = good.getName();
+        this._addStock(goodName, amount);
+    }
+
+    public void addStock (String goodName, double amount) {
+        this._addStock(goodName, amount);
+    }
+
+    private void _addStock(String goodName, double amount) {
         if (stockpile.containsKey(goodName)) {
             double currentStock = stockpile.get(goodName);
             stockpile.put(goodName, currentStock + amount);
@@ -41,6 +50,18 @@ public class Stockpile {
             takenAmount = 0;
         }
         return  takenAmount;
+    }
+
+    public double getStockCount (String goodType) {
+        if (this.stockpile.containsKey(goodType)) {
+            return this.stockpile.get(goodType);
+        } else {
+            return 0;
+        }
+    }
+
+    public Set<String> getGoodTypes () {
+        return this.stockpile.keySet();
     }
 
     public String toString() {

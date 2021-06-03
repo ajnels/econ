@@ -1,27 +1,26 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class Main {
 
     public static void main (String[] args) {
         Good food = new Good("Food");
 
-
         Pop pop = new Pop();
         List<Pop> pops = new ArrayList<Pop>();
         pops.add(pop);
 
         Stockpile stockpile = new Stockpile();
-        //stockpile.addStock(food, 10);
 
         GoodsProducer farm = new GoodsProducer(food);
         List<GoodsProducer> goodsProducers = new ArrayList<>();
         goodsProducers.add(farm);
 
-        System.out.println("Stockpile starts as: " + stockpile);
         cycle(pops, stockpile, goodsProducers);
-        System.out.println("Stockpile is now: " + stockpile);
+        cycle(pops, stockpile, goodsProducers);
+
+        System.out.println("Pop info: " + pops.get(0));
     }
 
     private static void cycle(List<Pop> Pops, Stockpile stockpile, List<GoodsProducer> goodsProducers) {
@@ -35,10 +34,8 @@ public class Main {
                 }
             }
 
-            // TODO expand to work on all goods
-            if (pop.getFoodNeeded() > 0) {
-                pop.setFoodAmount(stockpile.takeStock("Food", pop.getFoodNeeded()));
-            }
+            pop.buyNeeds(stockpile);
+
         }
 
         //produce goods
