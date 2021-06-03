@@ -33,9 +33,8 @@ public class Main {
                     }
                 }
             }
-
             pop.buyNeeds(stockpile);
-
+            pop.consumeNeeds();
         }
 
         //produce goods

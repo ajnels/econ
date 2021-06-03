@@ -3,7 +3,7 @@ import java.util.Set;
 
 public class Stockpile {
 
-    protected HashMap<String, Double> stockpile = new HashMap<String, Double>();
+    protected HashMap<String, Double> stockpile = new HashMap<>();
 
     public void addStock (Good good, double amount) {
         String goodName = good.getName();

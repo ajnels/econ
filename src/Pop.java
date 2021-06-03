@@ -1,4 +1,4 @@
-import java.util.Iterator;
+
 import java.util.Set;
 
 public class Pop {
@@ -27,6 +27,9 @@ public class Pop {
                 this.stockpile.addStock(needType, stockpile.takeStock(needType, needLimit - needCount));
             }
         }
+    }
+
+    public void consumeNeeds() {
     }
 
     public GoodsProducer getJob () {
