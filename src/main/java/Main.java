@@ -1,11 +1,17 @@
+import com.esotericsoftware.yamlbeans.YamlReader;
+
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Main {
 
+    private static ArrayList<String> goods;
+
     public static void main (String[] args) {
-        Good food = new Good("Food");
+        init();
+
+        Good food = new Good(goods.get(0));
 
         Pop pop = new Pop();
         List<Pop> pops = new ArrayList<Pop>();
@@ -23,6 +29,19 @@ public class Main {
         System.out.println("Pop info: " + pops.get(0));
     }
 
+    private static void init() {
+        try {
+            YamlReader reader = new YamlReader(new FileReader("config/good_types.yaml"));
+            Object object = reader.read();
+            ArrayList<String> yaml_config = (ArrayList<String>)object;
+
+            goods = yaml_config;
+
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
     private static void cycle(List<Pop> Pops, Stockpile stockpile, List<GoodsProducer> goodsProducers) {
         //pop actions
         for (Pop pop : Pops) {
@@ -34,7 +53,7 @@ public class Main {
                 }
             }
             pop.buyNeeds(stockpile);
-            pop.consumeNeeds();
+            consumeNeeds(pop);
         }
 
         //produce goods
@@ -42,6 +61,10 @@ public class Main {
             double goodsProducedAmount = goodsProducer.produceGoods();
             stockpile.addStock(goodsProducer.getGoodType(), goodsProducedAmount);
         }
+
+    }
+
+    private static void consumeNeeds(Pop pop) {
 
     }
 }

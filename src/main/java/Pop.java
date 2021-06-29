@@ -29,9 +29,6 @@ public class Pop {
         }
     }
 
-    public void consumeNeeds() {
-    }
-
     public GoodsProducer getJob () {
         return this.job;
     }
