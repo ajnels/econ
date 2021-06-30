@@ -2,9 +2,6 @@
 import com.esotericsoftware.yamlbeans.YamlReader;
 
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class Pop {
 
@@ -46,6 +43,10 @@ public class Pop {
 
     public void setJob(GoodsProducer job) {
         this.job = job;
+    }
+
+    public Stockpile getStockpile() {
+        return this.stockpile;
     }
 
     public String toString () {

@@ -77,6 +77,12 @@ public class Main {
     }
 
     private static void consumeNeeds(Pop pop) {
+        Set<String> needTypes = pop.needs.getNeedTypes();
+        for (String needType : needTypes) {
+            double needConsumeAmount = pop.needs.getConsumeAmount(needType);
 
+            pop.stockpile.removeStock(needType, needConsumeAmount);
+            System.out.println("Pop is consuming: " + needType + " of amt: " + needConsumeAmount);
+        }
     }
 }

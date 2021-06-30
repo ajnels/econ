@@ -33,6 +33,10 @@ public class Stockpile {
         return _takeStock(goodName, amount);
     }
 
+    public void removeStock (String goodName, double amount) {
+        _takeStock(goodName, amount);
+    }
+
     private double _takeStock(String goodName, double amount) {
         double takenAmount = 0.0;
         if (stockpile.containsKey(goodName)) {
@@ -49,7 +53,7 @@ public class Stockpile {
         } else {
             takenAmount = 0;
         }
-        return  takenAmount;
+        return takenAmount;
     }
 
     public double getStockCount (String goodType) {
