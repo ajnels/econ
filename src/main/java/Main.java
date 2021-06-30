@@ -2,16 +2,17 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
-    private static ArrayList<String> goods;
 
     public static void main (String[] args) {
         init();
 
-        Good food = new Good(goods.get(0));
+        Good food = GoodsConfig.getInstance().getGood("Food");
 
         Pop pop = new Pop();
         List<Pop> pops = new ArrayList<Pop>();
@@ -30,15 +31,18 @@ public class Main {
     }
 
     private static void init() {
+        GoodsConfig goodsConfig = GoodsConfig.getInstance();
         try {
-            YamlReader reader = new YamlReader(new FileReader("config/good_types.yaml"));
-            Object object = reader.read();
-            ArrayList<String> yaml_config = (ArrayList<String>)object;
-
-            goods = yaml_config;
-
+            YamlReader reader = new YamlReader(new FileReader("config/goods.yaml"));
+            while (true) {
+                Good good = reader.read(Good.class);
+                if (good == null) {
+                    break;
+                }
+                goodsConfig.addGood(good.name, good);
+            }
         } catch (Exception exception) {
-            System.out.println(exception.getMessage());
+            System.out.println("Error reading in init data: " + exception.getMessage());
         }
     }
 
