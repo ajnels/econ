@@ -5,15 +5,13 @@ import java.util.*;
 
 public class Main {
 
+    private static List<Pop> pops;
 
     public static void main (String[] args) {
+        pops = new ArrayList<>();
         init();
 
         Good food = GoodsConfig.getInstance().getGood("Food");
-
-        Pop pop = new Pop();
-        List<Pop> pops = new ArrayList<Pop>();
-        pops.add(pop);
 
         Stockpile stockpile = new Stockpile();
 
@@ -21,13 +19,18 @@ public class Main {
         List<GoodsProducer> goodsProducers = new ArrayList<>();
         goodsProducers.add(farm);
 
-        cycle(pops, stockpile, goodsProducers);
-        cycle(pops, stockpile, goodsProducers);
+        cycle(stockpile, goodsProducers);
+        cycle(stockpile, goodsProducers);
 
-        System.out.println("Pop info: " + pops.get(0));
+        System.out.println("Pop info: " + pops);
     }
 
     private static void init() {
+        loadGoodTypes();
+        loadPopInfo();
+    }
+
+    private static void loadGoodTypes() {
         GoodsConfig goodsConfig = GoodsConfig.getInstance();
         try {
             YamlReader reader = new YamlReader(new FileReader("config/goods.yaml"));
@@ -43,9 +46,31 @@ public class Main {
         }
     }
 
-    private static void cycle(List<Pop> Pops, Stockpile stockpile, List<GoodsProducer> goodsProducers) {
+    private static void loadPopInfo() {
+        try {
+            YamlReader reader = new YamlReader(new FileReader("config/pop_info.yaml"));
+            while (true) {
+                HashMap<String, String> popInfo = (HashMap<String, String>)reader.read();
+                if (popInfo == null) {
+                    break;
+                }
+                String popRace = popInfo.get("race");
+                int popCount   = Integer.parseInt(popInfo.get("size"));
+
+                for (int i = 0; i < popCount; i++) {
+                    Pop pop = new Pop();
+                    pop.setRace(popRace);
+                    pops.add(pop);
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Error reading in population data: " + exception.getMessage());
+        }
+    }
+
+    private static void cycle(Stockpile stockpile, List<GoodsProducer> goodsProducers) {
         //pop actions
-        for (Pop pop : Pops) {
+        for (Pop pop : pops) {
             if (!pop.hasJob()) {
                 for (GoodsProducer producer : goodsProducers) {
                     if (producer.hasOpenings()) {
@@ -82,7 +107,6 @@ public class Main {
             double needConsumeAmount = pop.needs.getConsumeAmount(needType);
 
             pop.stockpile.removeStock(needType, needConsumeAmount);
-            System.out.println("Pop is consuming: " + needType + " of amt: " + needConsumeAmount);
         }
     }
 }

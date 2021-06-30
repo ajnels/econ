@@ -1,5 +1,5 @@
-name: Food
-consumeAmount: 2.0
+race: Human
+size: 10
 ---
-name: Clothing
-consumeAmount: .1
+race: Dwarf
+size: 5

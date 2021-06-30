@@ -11,6 +11,8 @@ public class Pop {
 
     protected GoodsProducer job;
 
+    protected String race;
+
     public Pop () {
         this.stockpile = new Stockpile();
         this.needs = new PopNeeds();
@@ -20,7 +22,7 @@ public class Pop {
 
     private void init () {
         try {
-            YamlReader reader = new YamlReader(new FileReader("config/pop_info.yaml"));
+            YamlReader reader = new YamlReader(new FileReader("config/pop_needs_info.yaml"));
             while (true) {
                 NeedsInfo needsInfo = reader.read(NeedsInfo.class);
                 if (needsInfo == null) {
@@ -49,8 +51,16 @@ public class Pop {
         return this.stockpile;
     }
 
+    public String getRace() {
+        return race;
+    }
+
+    public void setRace(String race) {
+        this.race = race;
+    }
+
     public String toString () {
-        return "Stock: " + stockpile + "  Needs: " + needs;
+        return "Race: " + this.getRace() + "; Stock: " + stockpile + "\n";
     }
 
 }

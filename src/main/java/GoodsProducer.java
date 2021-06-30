@@ -7,7 +7,7 @@ public class GoodsProducer {
 
     private List<Pop> workers;
 
-    private final double base_production = 10;
+    private final double baseProduction = 10;
 
     private int workerLimit = 10;
 
@@ -26,7 +26,7 @@ public class GoodsProducer {
     }
 
     public double produceGoods() {
-        return this.workers.size() * this.base_production;
+        return this.workers.size() * this.baseProduction;
     }
 
     public boolean hasOpenings() {

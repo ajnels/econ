@@ -1,0 +1,5 @@
+name: Food
+consumeAmount: 2.0
+---
+name: Clothing
+consumeAmount: .1
