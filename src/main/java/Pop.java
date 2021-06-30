@@ -36,17 +36,6 @@ public class Pop {
         }
     }
 
-    public void buyNeeds (Stockpile stockpile) {
-        Set<String> needTypes = this.needs.getNeedTypes();
-        for (String needType : needTypes) {
-            double needCount = this.stockpile.getStockCount(needType);
-            double needLimit = this.needs.getConsumeAmount(needType) * 2;
-            if (needCount < needLimit) {
-                this.stockpile.addStock(needType, stockpile.takeStock(needType, needLimit - needCount));
-            }
-        }
-    }
-
     public GoodsProducer getJob () {
         return this.job;
     }

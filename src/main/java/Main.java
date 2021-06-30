@@ -1,10 +1,7 @@
 import com.esotericsoftware.yamlbeans.YamlReader;
 
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
 
@@ -56,7 +53,7 @@ public class Main {
                     }
                 }
             }
-            pop.buyNeeds(stockpile);
+            buyNeeds(pop, stockpile);
             consumeNeeds(pop);
         }
 
@@ -66,6 +63,17 @@ public class Main {
             stockpile.addStock(goodsProducer.getGoodType(), goodsProducedAmount);
         }
 
+    }
+
+    private static void buyNeeds (Pop pop, Stockpile stockpile) {
+        Set<String> needTypes = pop.needs.getNeedTypes();
+        for (String needType : needTypes) {
+            double needCount = pop.stockpile.getStockCount(needType);
+            double needLimit = pop.needs.getConsumeAmount(needType) * 2;
+            if (needCount < needLimit) {
+                pop.stockpile.addStock(needType, stockpile.takeStock(needType, needLimit - needCount));
+            }
+        }
     }
 
     private static void consumeNeeds(Pop pop) {
