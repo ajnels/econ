@@ -37,21 +37,19 @@ public class Stockpile {
         _takeStock(goodName, amount);
     }
 
-    private double _takeStock(String goodName, double amount) {
+    private double _takeStock(String goodName, double amountRequested) {
         double takenAmount = 0.0;
         if (stockpile.containsKey(goodName)) {
             double currentStock = stockpile.get(goodName);
 
             double newAmount = 0;
-            if (currentStock < amount) {
+            if (currentStock < amountRequested) {
                 takenAmount = currentStock;
             } else {
-                takenAmount = amount;
-                newAmount = currentStock - amount;
+                takenAmount = amountRequested;
+                newAmount = currentStock - amountRequested;
             }
             stockpile.put(goodName, newAmount);
-        } else {
-            takenAmount = 0;
         }
         return takenAmount;
     }

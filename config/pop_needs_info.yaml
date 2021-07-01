@@ -1,5 +1,5 @@
-name: Food
+name: Grain
 consumeAmount: 2.0
----
-name: Clothing
-consumeAmount: .1
+#---
+#name: Clothing
+#consumeAmount: .1

@@ -1,3 +1,4 @@
+import java.util.Collection;
 import java.util.HashMap;
 
 public class GoodsConfig {
@@ -20,5 +21,9 @@ public class GoodsConfig {
 
     public Good getGood (String goodName) {
         return this.goodsMap.get(goodName);
+    }
+
+    public Collection<Good> getAllGoods() {
+        return this.goodsMap.values();
     }
 }

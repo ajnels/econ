@@ -7,20 +7,17 @@ public class Main {
 
     private static List<Pop> pops;
 
-    public static void main (String[] args) {
-        pops = new ArrayList<>();
-        init();
+    private static List<GoodsProducer> goodsProducers;
 
-        Good food = GoodsConfig.getInstance().getGood("Food");
+    public static void main (String[] args) {
+        pops           = new ArrayList<>();
+        goodsProducers = new ArrayList<>();
+        init();
 
         Stockpile stockpile = new Stockpile();
 
-        GoodsProducer farm = new GoodsProducer(food);
-        List<GoodsProducer> goodsProducers = new ArrayList<>();
-        goodsProducers.add(farm);
-
-        cycle(stockpile, goodsProducers);
-        cycle(stockpile, goodsProducers);
+        cycle(stockpile);
+        cycle(stockpile);
 
         System.out.println("Pop info: " + pops);
     }
@@ -28,22 +25,7 @@ public class Main {
     private static void init() {
         loadGoodTypes();
         loadPopInfo();
-    }
-
-    private static void loadGoodTypes() {
-        GoodsConfig goodsConfig = GoodsConfig.getInstance();
-        try {
-            YamlReader reader = new YamlReader(new FileReader("config/goods.yaml"));
-            while (true) {
-                Good good = reader.read(Good.class);
-                if (good == null) {
-                    break;
-                }
-                goodsConfig.addGood(good.name, good);
-            }
-        } catch (Exception exception) {
-            System.out.println("Error reading in init data: " + exception.getMessage());
-        }
+        loadProducerInfo();
     }
 
     private static void loadPopInfo() {
@@ -68,7 +50,40 @@ public class Main {
         }
     }
 
-    private static void cycle(Stockpile stockpile, List<GoodsProducer> goodsProducers) {
+    private static void loadGoodTypes() {
+        GoodsConfig goodsConfig = GoodsConfig.getInstance();
+        try {
+            YamlReader reader = new YamlReader(new FileReader("config/goods.yaml"));
+            while (true) {
+                Good good = reader.read(Good.class);
+                if (good == null) {
+                    break;
+                }
+                goodsConfig.addGood(good.name, good);
+            }
+        } catch (Exception exception) {
+            System.out.println("Error reading in goods data: " + exception.getMessage());
+        }
+    }
+
+    private static void loadProducerInfo() {
+        try {
+            YamlReader reader = new YamlReader(new FileReader("config/producer_info.yaml"));
+            while (true) {
+                GoodsProducer producer = reader.read(GoodsProducer.class);
+                if (producer == null) {
+                    break;
+                }
+
+                goodsProducers.add(producer);
+            }
+        } catch (Exception exception) {
+            System.out.println("Error reading in producer data");
+            exception.printStackTrace();
+        }
+    }
+
+    private static void cycle(Stockpile stockpile) {
         //pop actions
         for (Pop pop : pops) {
             if (!pop.hasJob()) {
@@ -93,10 +108,11 @@ public class Main {
     private static void buyNeeds (Pop pop, Stockpile stockpile) {
         Set<String> needTypes = pop.needs.getNeedTypes();
         for (String needType : needTypes) {
-            double needCount = pop.stockpile.getStockCount(needType);
-            double needLimit = pop.needs.getConsumeAmount(needType) * 2;
-            if (needCount < needLimit) {
-                pop.stockpile.addStock(needType, stockpile.takeStock(needType, needLimit - needCount));
+            double needCurrentStock = pop.stockpile.getStockCount(needType);
+            double needCount        = pop.needs.getConsumeAmount(needType) * 2;
+            if (needCurrentStock <= needCount) {
+                double stockTakenFromPile = stockpile.takeStock(needType, needCount - needCurrentStock);
+                pop.getStockpile().addStock(needType, stockTakenFromPile);
             }
         }
     }

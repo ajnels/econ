@@ -1,0 +1,5 @@
+name: Farm
+workerLimit: 10
+good:
+  !Good
+  name: Grain
