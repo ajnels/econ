@@ -19,7 +19,6 @@ public class Main {
         cycle(stockpile);
         cycle(stockpile);
 
-        System.out.println("Pop info: " + pops);
     }
 
     private static void init() {
@@ -97,8 +96,14 @@ public class Main {
             consumeNeeds(pop);
         }
 
-        //produce goods
         for (GoodsProducer goodsProducer : goodsProducers) {
+            Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
+            for (String neededGood : producerNeeds) {
+                double neededAmount        = goodsProducer.getNeededAmount(neededGood);
+                double amountTakenFromPile = stockpile.takeStock(neededGood, neededAmount);
+                goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
+            }
+
             double goodsProducedAmount = goodsProducer.produceGoods();
             stockpile.addStock(goodsProducer.getGoodType(), goodsProducedAmount);
         }

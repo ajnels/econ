@@ -1,5 +1,55 @@
-name: Farm
+name: Grain Farm
 workerLimit: 10
 good:
   !Good
   name: Grain
+---
+name: Sheep Homestead
+workerLimit: 10
+good:
+  !Good
+  name: Wool
+---
+name: Cotton Farm
+workerLimit: 10
+good:
+  !Good
+  name: Cotton
+---
+name: Tobacco Farm
+workerLimit: 10
+good:
+  !Good
+  name: Tobbaco
+---
+name: Forestry
+workerLimit: 10
+good:
+  !Good
+  name: Timber
+---
+name: Coal Mine
+workerLimit: 10
+good:
+  !Good
+  name: Coal
+---
+name: Iron Mine
+workerLimit: 10
+good:
+  !Good
+  name: Iron
+---
+name: Gold Mine
+workerLimit: 10
+good:
+  !Good
+  name: Gold
+---
+name: Bakery
+workerLimit: 10
+inputNeeds:
+    Grain: 5
+good:
+  !Good
+  name: Bread
