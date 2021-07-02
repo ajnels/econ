@@ -15,7 +15,7 @@ public class GoodsProducer {
 
     private ArrayList<Pop> workers;
 
-    private final double baseProduction = 10;
+    private final double baseProduction = 5;
 
     public int workerLimit;
 
@@ -45,23 +45,29 @@ public class GoodsProducer {
         boolean hasEnoughStock = true;
         Set<String> producerNeeds = this.getInputNeeds().keySet();
 
+        double lowestRatio = 1;
         for (String neededGood : producerNeeds) {
-            double neededAmount        = this.getNeededAmount(neededGood);
+            double neededAmountMax     = this.getNeededAmount(neededGood) * this.workers.size();
             double amountInStockpile   = stockpile.getStockCount(neededGood);
 
-            if (neededAmount > amountInStockpile) {
-                hasEnoughStock = false;
+            double ratioOfGoods = amountInStockpile / neededAmountMax;
+            if (ratioOfGoods > 1) {
+                ratioOfGoods = 1.0;
+            }
+            if (ratioOfGoods < lowestRatio) {
+                lowestRatio = ratioOfGoods;
             }
         }
 
-        if (!hasEnoughStock) {
-            return 0;
-        }
-        return this.workers.size() * this.baseProduction;
+        return this.workers.size() * this.baseProduction * lowestRatio;
     }
 
     public boolean hasOpenings() {
         return this.workers.size() < this.workerLimit;
+    }
+
+    public int getNumberOfWorkers() {
+        return this.workers.size();
     }
 
     public HashMap<String, Double> getInputNeeds () {
