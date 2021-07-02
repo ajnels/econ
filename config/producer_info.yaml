@@ -53,3 +53,12 @@ inputNeeds:
 good:
   !Good
   name: Bread
+---
+name: Steel Mill
+workerLimit: 10
+inputNeeds:
+  Iron: 5
+  Coal: 4
+good:
+  !Good
+  name: Steel
