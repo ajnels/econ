@@ -49,7 +49,7 @@ good:
 name: Bakery
 workerLimit: 10
 inputNeeds:
-    Grain: 5
+    Grain: 10
 good:
   !Good
   name: Bread

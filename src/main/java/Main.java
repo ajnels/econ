@@ -17,7 +17,9 @@ public class Main {
         Stockpile stockpile = new Stockpile();
 
         cycle(stockpile);
+        System.out.println(stockpile);
         cycle(stockpile);
+        System.out.println(stockpile);
 
     }
 
@@ -99,7 +101,7 @@ public class Main {
         for (GoodsProducer goodsProducer : goodsProducers) {
             Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
             for (String neededGood : producerNeeds) {
-                double neededAmount        = goodsProducer.getNeededAmount(neededGood);
+                double neededAmount        = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
                 double amountTakenFromPile = stockpile.takeStock(neededGood, neededAmount);
                 goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
             }
