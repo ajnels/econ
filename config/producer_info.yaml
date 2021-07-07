@@ -62,3 +62,11 @@ inputNeeds:
 good:
   !Good
   name: Steel
+---
+name: Brewery
+workerLimit: 10
+inputNeeds:
+  Grain: 20
+good:
+  !Good
+  name: Beer
