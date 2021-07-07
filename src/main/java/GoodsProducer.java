@@ -42,7 +42,6 @@ public class GoodsProducer {
     }
 
     public double produceGoods() {
-        boolean hasEnoughStock = true;
         Set<String> producerNeeds = this.getInputNeeds().keySet();
 
         double lowestRatio = 1;
