@@ -7,33 +7,14 @@ public class Pop {
 
     protected Stockpile stockpile;
 
-    protected PopNeeds needs;
-
     protected GoodsProducer job;
 
     protected String race;
 
     public Pop () {
         this.stockpile = new Stockpile();
-        this.needs = new PopNeeds();
-
-        init();
     }
 
-    private void init () {
-        try {
-            YamlReader reader = new YamlReader(new FileReader("config/pop_needs_info.yaml"));
-            while (true) {
-                NeedsInfo needsInfo = reader.read(NeedsInfo.class);
-                if (needsInfo == null) {
-                    break;
-                }
-                this.needs.addNeedsInfo(needsInfo);
-            }
-        } catch (Exception exception) {
-            System.out.println("Error reading in init pop data: " + exception.getMessage());
-        }
-    }
 
     public GoodsProducer getJob () {
         return this.job;

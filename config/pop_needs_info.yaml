@@ -1,5 +1,34 @@
-name: Bread
-consumeAmount: 2.0
----
-name: Clothing
-consumeAmount: .1
+Human:
+  - !NeedsInfo
+    name: Bread
+    consumeAmount: 2.0
+  - !NeedsInfo
+    name: Clothing
+    consumeAmount: .1
+
+Orc:
+  - !NeedsInfo
+    name: Bread
+    consumeAmount: 2.0
+  - !NeedsInfo
+    name: Clothing
+    consumeAmount: .2
+
+Naga:
+  - !NeedsInfo
+    name: Bread
+    consumeAmount: 2.0
+  - !NeedsInfo
+    name: Clothing
+    consumeAmount: .2
+
+Dwarf:
+  - !NeedsInfo
+    name: Bread
+    consumeAmount: 2.0
+  - !NeedsInfo
+    name: Clothing
+    consumeAmount: .1
+  - !NeedsInfo
+    name: Beer
+    consumeAmount: 1

@@ -25,6 +25,7 @@ public class Main {
 
     private static void init() {
         loadGoodTypes();
+        loadPopNeeds();
         loadPopInfo();
         loadProducerInfo();
     }
@@ -48,6 +49,27 @@ public class Main {
             }
         } catch (Exception exception) {
             System.out.println("Error reading in population data: " + exception.getMessage());
+        }
+    }
+
+    private static void loadPopNeeds() {
+        PopNeedsConfig popNeedsConfig = PopNeedsConfig.getInstance();
+        try {
+            YamlReader reader = new YamlReader(new FileReader("config/pop_needs_info.yaml"));
+            while (true) {
+                HashMap<String, ArrayList<NeedsInfo>> popNeedsInfo = (HashMap<String, ArrayList<NeedsInfo>>)reader.read();
+                if (popNeedsInfo == null) {
+                    break;
+                }
+                for (String race: popNeedsInfo.keySet()) {
+                    for (NeedsInfo need: popNeedsInfo.get(race)) {
+                        popNeedsConfig.addNeed(race, need);
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            System.out.println("Error reading in init pop needs data:");
+            exception.printStackTrace();
         }
     }
 
@@ -113,10 +135,11 @@ public class Main {
     }
 
     private static void buyNeeds (Pop pop, Stockpile stockpile) {
-        Set<String> needTypes = pop.needs.getNeedTypes();
-        for (String needType : needTypes) {
+        PopNeedsConfig popNeedsConfig = PopNeedsConfig.getInstance();
+        Set<String> needTypesForPop = popNeedsConfig.getNeedTypesForPop(pop);
+        for (String needType : needTypesForPop) {
             double needCurrentStock = pop.stockpile.getStockCount(needType);
-            double needCount        = pop.needs.getConsumeAmount(needType) * 2;
+            double needCount        = popNeedsConfig.getConsumeAmount(pop, needType) * 2;
             if (needCurrentStock <= needCount) {
                 double stockTakenFromPile = stockpile.takeStock(needType, needCount - needCurrentStock);
                 pop.getStockpile().addStock(needType, stockTakenFromPile);
@@ -125,9 +148,10 @@ public class Main {
     }
 
     private static void consumeNeeds(Pop pop) {
-        Set<String> needTypes = pop.needs.getNeedTypes();
-        for (String needType : needTypes) {
-            double needConsumeAmount = pop.needs.getConsumeAmount(needType);
+        PopNeedsConfig popNeedsConfig = PopNeedsConfig.getInstance();
+        Set<String> needTypesForPop = popNeedsConfig.getNeedTypesForPop(pop);
+        for (String needType : needTypesForPop) {
+            double needConsumeAmount = popNeedsConfig.getConsumeAmount(pop, needType);
 
             pop.stockpile.removeStock(needType, needConsumeAmount);
         }
