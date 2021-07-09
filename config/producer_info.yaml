@@ -20,7 +20,7 @@ name: Tobacco Farm
 workerLimit: 10
 good:
   !Good
-  name: Tobbaco
+  name: Tobacco
 ---
 name: Forestry
 workerLimit: 10
