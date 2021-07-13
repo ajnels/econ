@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 public class GoodsProducer {
@@ -25,7 +24,7 @@ public class GoodsProducer {
         this.stockpile  = new Stockpile();
     }
 
-    public Good getGoodType () {
+    public Good getGood() {
         return this.good;
     }
 
@@ -102,6 +101,6 @@ public class GoodsProducer {
     }
 
     public String toString() {
-        return this.name + " produces " + this.getGoodType().getName();
+        return this.name + " produces " + this.getGood().getName();
     }
 }

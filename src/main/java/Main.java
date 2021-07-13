@@ -5,33 +5,27 @@ import java.util.*;
 
 public class Main {
 
-    private static List<Pop> pops;
-
-    private static List<GoodsProducer> goodsProducers;
-
     public static void main (String[] args) {
-        pops           = new ArrayList<>();
-        goodsProducers = new ArrayList<>();
-        init();
+        Region region = new Region();
 
-        Stockpile stockpile = new Stockpile();
+        init(region);
 
-        cycle(stockpile);
-        System.out.println(stockpile);
-        cycle(stockpile);
-        System.out.println(stockpile);
-
+        cycle(region);
+        System.out.println(region.getStockpile());
+        cycle(region);
+        System.out.println(region.getStockpile());
     }
 
-    private static void init() {
+    private static void init(Region region) {
         loadGoodTypes();
         loadPopNeeds();
         loadPopWants();
-        loadPopInfo();
-        loadProducerInfo();
+        loadPopInfo(region);
+        loadProducerInfo(region);
     }
 
-    private static void loadPopInfo() {
+    private static void loadPopInfo(Region region) {
+        List<Pop> pops = new ArrayList<>();
         try {
             YamlReader reader = new YamlReader(new FileReader("config/pop_info.yaml"));
             while (true) {
@@ -51,6 +45,7 @@ public class Main {
         } catch (Exception exception) {
             System.out.println("Error reading in population data: " + exception.getMessage());
         }
+        region.setPops(pops);
     }
 
     private static void loadPopNeeds() {
@@ -111,7 +106,8 @@ public class Main {
         }
     }
 
-    private static void loadProducerInfo() {
+    private static void loadProducerInfo(Region region) {
+        List<GoodsProducer> goodProducers = new ArrayList<>();
         try {
             YamlReader reader = new YamlReader(new FileReader("config/producer_info.yaml"));
             while (true) {
@@ -120,42 +116,45 @@ public class Main {
                     break;
                 }
 
-                goodsProducers.add(producer);
+                goodProducers.add(producer);
             }
         } catch (Exception exception) {
             System.out.println("Error reading in producer data");
             exception.printStackTrace();
         }
+        region.setGoodsProducers(goodProducers);
     }
 
-    private static void cycle(Stockpile stockpile) {
+    private static void cycle(Region region) {
+        List<GoodsProducer> regionalProducers = region.getGoodsProducers();
+
         //pop actions
-        for (Pop pop : pops) {
+        for (Pop pop : region.getPops()) {
             if (!pop.hasJob()) {
-                for (GoodsProducer producer : goodsProducers) {
+                for (GoodsProducer producer : regionalProducers) {
                     if (producer.hasOpenings()) {
                         producer.addWorker(pop);
                     }
                 }
             }
-            buyNeeds(pop, stockpile);
+            buyNeeds(pop, region.getStockpile());
             consumeNeeds(pop);
 
-            buyWants(pop, stockpile);
+            buyWants(pop, region.getStockpile());
             consumeWants(pop);
 
         }
 
-        for (GoodsProducer goodsProducer : goodsProducers) {
+        for (GoodsProducer goodsProducer : regionalProducers) {
             Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
             for (String neededGood : producerNeeds) {
                 double neededAmount        = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
-                double amountTakenFromPile = stockpile.takeStock(neededGood, neededAmount);
+                double amountTakenFromPile = region.getStockpile().takeStock(neededGood, neededAmount);
                 goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
             }
 
             double goodsProducedAmount = goodsProducer.produceGoods();
-            stockpile.addStock(goodsProducer.getGoodType(), goodsProducedAmount);
+            region.getStockpile().addStock(goodsProducer.getGood(), goodsProducedAmount);
         }
 
     }
