@@ -2,12 +2,23 @@ name: region1
 resource: Grain
 pops:
   - race: Human
-    size: 100
-  - race: Dwarf
-    size: 50
-  - race: Orc
-    size: 50
-  - race: Naga
     size: 20
+  - race: Dwarf
+    size: 15
+  - race: Orc
+    size: 10
+  - race: Naga
+    size: 5
 factories:
   - Beer
+  - Bread
+---
+name: region2
+resource: Wool
+pops:
+  - race: Human
+    size: 20
+  - race: Naga
+    size: 5
+factories:
+  - Clothing

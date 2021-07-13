@@ -30,8 +30,8 @@ public class Region {
         return pops;
     }
 
-    public void setPops(List<Pop> pops) {
-        this.pops = pops;
+    public void addPops(List<Pop> pops) {
+        this.pops.addAll(pops);
     }
 
     public Stockpile getStockpile() {
@@ -56,5 +56,26 @@ public class Region {
 
     public void addGoodsProducer(GoodsProducer factory) {
         this.goodsProducers.add(factory);
+    }
+
+    public String showWorkStats() {
+        StringBuilder workStats = new StringBuilder();
+
+        // make a double to force double division
+        double numEmployed = 0;
+        for (Pop pop : this.pops) {
+            if (pop.hasJob()) {
+                numEmployed++;
+            }
+        }
+
+        double percentageEmployed = (numEmployed / this.pops.size()) * 100;
+        workStats.append("Employed: ").append(String.format("%,.2f", percentageEmployed)).append(" %\n");
+
+        for (GoodsProducer producer : this.goodsProducers) {
+            workStats.append(producer.getName()).append(": ").append(producer.getNumberOfWorkers()).append(" / ").append(producer.getWorkersLimit()).append("  ( ").append((producer.getNumberOfWorkers() / producer.getWorkersLimit()) * 100).append(" % )\n");
+        }
+        workStats.append("-------------------------------------------------------------------\n");
+        return workStats.toString();
     }
 }

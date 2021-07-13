@@ -9,9 +9,13 @@ public class Main {
         List<Region> regions = init();
 
         cycle(regions);
-        System.out.println(regions.get(0).getStockpile());
+
         cycle(regions);
-        System.out.println(regions.get(0).getStockpile());
+
+        for (Region region : regions) {
+            System.out.println(region.getName() + ": Population: " + region.getPops().size() + " work stats: ");
+            System.out.println(region.showWorkStats());
+        }
     }
 
     private static List<Region> init() {
@@ -55,8 +59,7 @@ public class Main {
                         pop.setRace(popRace);
                         pops.add(pop);
                     }
-
-                    region.setPops(pops);
+                    region.addPops(pops);
                 }
 
                 List<String> factoryInfo = (List<String>)regionInfo.get("factories");
@@ -161,15 +164,18 @@ public class Main {
                     for (GoodsProducer producer : regionalProducers) {
                         if (producer.hasOpenings()) {
                             producer.addWorker(pop);
+                            pop.setJob(producer);
+                            // stop job search
+                            break;
                         }
                     }
                 }
+
                 buyNeeds(pop, region.getStockpile());
                 consumeNeeds(pop);
 
                 buyWants(pop, region.getStockpile());
                 consumeWants(pop);
-
             }
 
             for (GoodsProducer goodsProducer : regionalProducers) {

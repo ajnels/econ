@@ -1,8 +1,4 @@
 
-import com.esotericsoftware.yamlbeans.YamlReader;
-
-import java.io.FileReader;
-
 public class Pop {
 
     protected Stockpile stockpile;
@@ -13,6 +9,7 @@ public class Pop {
 
     public Pop () {
         this.stockpile = new Stockpile();
+        this.job = null;
     }
 
 

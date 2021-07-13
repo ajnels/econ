@@ -70,3 +70,11 @@ inputNeeds:
 good:
   !Good
   name: Beer
+---
+name: Tailor
+isRawExtraction: false
+inputNeeds:
+  Wool: 10
+good:
+  !Good
+  name: Clothing

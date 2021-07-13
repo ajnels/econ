@@ -33,15 +33,14 @@ public class GoodsProducer {
     }
 
     public void addWorker (Pop pop) {
-        if (workers.size() >= this.getWorkersLimit()) {
+        if (this.workers.size() > this.getWorkersLimit()) {
             return;
         }
         this.workers.add(pop);
-        pop.setJob(this);
     }
 
-    private int getWorkersLimit() {
-        return (isRawExtraction) ? 20 : 10;
+    public int getWorkersLimit() {
+        return (this.isRawExtraction) ? 20 : 10;
     }
 
     public double produceGoods() {
