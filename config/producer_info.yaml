@@ -1,53 +1,53 @@
 name: Grain Farm
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Grain
 ---
 name: Sheep Homestead
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Wool
 ---
 name: Cotton Farm
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Cotton
 ---
 name: Tobacco Farm
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Tobacco
 ---
 name: Forestry
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Timber
 ---
 name: Coal Mine
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Coal
 ---
 name: Iron Mine
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Iron
 ---
 name: Gold Mine
-workerLimit: 10
+isRawExtraction: true
 good:
   !Good
   name: Gold
 ---
 name: Bakery
-workerLimit: 10
+isRawExtraction: false
 inputNeeds:
     Grain: 10
 good:
@@ -55,7 +55,7 @@ good:
   name: Bread
 ---
 name: Steel Mill
-workerLimit: 10
+isRawExtraction: false
 inputNeeds:
   Iron: 5
   Coal: 4
@@ -64,7 +64,7 @@ good:
   name: Steel
 ---
 name: Brewery
-workerLimit: 10
+isRawExtraction: false
 inputNeeds:
   Grain: 20
 good:

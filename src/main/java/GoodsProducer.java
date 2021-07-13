@@ -16,7 +16,7 @@ public class GoodsProducer {
 
     private final double baseProduction = 5;
 
-    public int workerLimit;
+    public boolean isRawExtraction;
 
     public GoodsProducer() {
         this.workers    = new ArrayList<>();
@@ -33,11 +33,15 @@ public class GoodsProducer {
     }
 
     public void addWorker (Pop pop) {
-        if (workers.size() >= this.workerLimit) {
+        if (workers.size() >= this.getWorkersLimit()) {
             return;
         }
         this.workers.add(pop);
         pop.setJob(this);
+    }
+
+    private int getWorkersLimit() {
+        return (isRawExtraction) ? 20 : 10;
     }
 
     public double produceGoods() {
@@ -61,7 +65,7 @@ public class GoodsProducer {
     }
 
     public boolean hasOpenings() {
-        return this.workers.size() < this.workerLimit;
+        return this.workers.size() < this.getWorkersLimit();
     }
 
     public int getNumberOfWorkers() {

@@ -6,46 +6,73 @@ import java.util.*;
 public class Main {
 
     public static void main (String[] args) {
-        Region region = new Region();
+        List<Region> regions = init();
 
-        init(region);
-
-        cycle(region);
-        System.out.println(region.getStockpile());
-        cycle(region);
-        System.out.println(region.getStockpile());
+        cycle(regions);
+        System.out.println(regions.get(0).getStockpile());
+        cycle(regions);
+        System.out.println(regions.get(0).getStockpile());
     }
 
-    private static void init(Region region) {
+    private static List<Region> init() {
         loadGoodTypes();
+        loadProducerInfo();
         loadPopNeeds();
         loadPopWants();
-        loadPopInfo(region);
-        loadProducerInfo(region);
+        List<Region> regions = loadPopInfo();
+
+        return regions;
     }
 
-    private static void loadPopInfo(Region region) {
-        List<Pop> pops = new ArrayList<>();
+    private static List<Region> loadPopInfo() {
+        List<Region> regions = new ArrayList<>();
         try {
-            YamlReader reader = new YamlReader(new FileReader("config/pop_info.yaml"));
+            YamlReader reader = new YamlReader(new FileReader("config/regions/region.yaml"));
             while (true) {
-                HashMap<String, String> popInfo = (HashMap<String, String>)reader.read();
-                if (popInfo == null) {
+                Map regionInfo = (Map) reader.read();
+                if (regionInfo == null) {
                     break;
                 }
-                String popRace = popInfo.get("race");
-                int popCount   = Integer.parseInt(popInfo.get("size"));
 
-                for (int i = 0; i < popCount; i++) {
-                    Pop pop = new Pop();
-                    pop.setRace(popRace);
-                    pops.add(pop);
+                String regionName      = (String) regionInfo.get("name");
+                String rawResourceName = (String) regionInfo.get("resource");
+
+                Region region = new Region();
+                region.setName(regionName);
+                region.setRawResource(GoodsConfig.getInstance().getGood(rawResourceName));
+                region.addGoodsProducer(ProducerFactory.getInstance().getProducer(rawResourceName));
+
+                List<HashMap<String, String>> popInfo = (List<HashMap<String, String>>)regionInfo.get("pops");
+
+                for (HashMap<String, String> popSummary : popInfo) {
+                    String popRace = popSummary.get("race");
+                    int popCount   = Integer.parseInt(popSummary.get("size"));
+
+                    List<Pop> pops = new ArrayList<>();
+
+                    for (int i = 0; i < popCount; i++) {
+                        Pop pop = new Pop();
+                        pop.setRace(popRace);
+                        pops.add(pop);
+                    }
+
+                    region.setPops(pops);
                 }
+
+                List<String> factoryInfo = (List<String>)regionInfo.get("factories");
+                for (String factoryType : factoryInfo) {
+                    GoodsProducer factory = ProducerFactory.getInstance().getProducer(factoryType);
+                    if (factory != null) {
+                        region.addGoodsProducer(factory);
+                    }
+                }
+
+                regions.add(region);
             }
         } catch (Exception exception) {
-            System.out.println("Error reading in population data: " + exception.getMessage());
+            System.out.println("Error reading in region data: " + exception.getMessage());
         }
-        region.setPops(pops);
+        return regions;
     }
 
     private static void loadPopNeeds() {
@@ -106,8 +133,8 @@ public class Main {
         }
     }
 
-    private static void loadProducerInfo(Region region) {
-        List<GoodsProducer> goodProducers = new ArrayList<>();
+    private static void loadProducerInfo() {
+        ProducerFactory producerFactory = ProducerFactory.getInstance();
         try {
             YamlReader reader = new YamlReader(new FileReader("config/producer_info.yaml"));
             while (true) {
@@ -116,45 +143,46 @@ public class Main {
                     break;
                 }
 
-                goodProducers.add(producer);
+                producerFactory.addProducer(producer);
             }
         } catch (Exception exception) {
             System.out.println("Error reading in producer data");
             exception.printStackTrace();
         }
-        region.setGoodsProducers(goodProducers);
     }
 
-    private static void cycle(Region region) {
-        List<GoodsProducer> regionalProducers = region.getGoodsProducers();
+    private static void cycle(List<Region> regions) {
+        for (Region region : regions) {
+            List<GoodsProducer> regionalProducers = region.getGoodsProducers();
 
-        //pop actions
-        for (Pop pop : region.getPops()) {
-            if (!pop.hasJob()) {
-                for (GoodsProducer producer : regionalProducers) {
-                    if (producer.hasOpenings()) {
-                        producer.addWorker(pop);
+            //pop actions
+            for (Pop pop : region.getPops()) {
+                if (!pop.hasJob()) {
+                    for (GoodsProducer producer : regionalProducers) {
+                        if (producer.hasOpenings()) {
+                            producer.addWorker(pop);
+                        }
                     }
                 }
-            }
-            buyNeeds(pop, region.getStockpile());
-            consumeNeeds(pop);
+                buyNeeds(pop, region.getStockpile());
+                consumeNeeds(pop);
 
-            buyWants(pop, region.getStockpile());
-            consumeWants(pop);
+                buyWants(pop, region.getStockpile());
+                consumeWants(pop);
 
-        }
-
-        for (GoodsProducer goodsProducer : regionalProducers) {
-            Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
-            for (String neededGood : producerNeeds) {
-                double neededAmount        = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
-                double amountTakenFromPile = region.getStockpile().takeStock(neededGood, neededAmount);
-                goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
             }
 
-            double goodsProducedAmount = goodsProducer.produceGoods();
-            region.getStockpile().addStock(goodsProducer.getGood(), goodsProducedAmount);
+            for (GoodsProducer goodsProducer : regionalProducers) {
+                Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
+                for (String neededGood : producerNeeds) {
+                    double neededAmount = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
+                    double amountTakenFromPile = region.getStockpile().takeStock(neededGood, neededAmount);
+                    goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
+                }
+
+                double goodsProducedAmount = goodsProducer.produceGoods();
+                region.getStockpile().addStock(goodsProducer.getGood(), goodsProducedAmount);
+            }
         }
 
     }
