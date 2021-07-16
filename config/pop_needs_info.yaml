@@ -4,7 +4,7 @@ Human:
     consumeAmount: 2.0
   - !NeedsInfo
     name: Clothing
-    consumeAmount: .1
+    consumeAmount: 1
 
 Orc:
   - !NeedsInfo
@@ -12,7 +12,7 @@ Orc:
     consumeAmount: 2.0
   - !NeedsInfo
     name: Clothing
-    consumeAmount: .2
+    consumeAmount: 2
 
 Naga:
   - !NeedsInfo
@@ -20,7 +20,7 @@ Naga:
     consumeAmount: 2.0
   - !NeedsInfo
     name: Clothing
-    consumeAmount: .2
+    consumeAmount: 2
 
 Dwarf:
   - !NeedsInfo
@@ -28,7 +28,7 @@ Dwarf:
     consumeAmount: 2.0
   - !NeedsInfo
     name: Clothing
-    consumeAmount: .1
+    consumeAmount: 1
   - !NeedsInfo
     name: Beer
     consumeAmount: 1

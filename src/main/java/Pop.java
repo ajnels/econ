@@ -1,11 +1,13 @@
 
 public class Pop {
 
-    protected Stockpile stockpile;
+    private Stockpile stockpile;
 
-    protected GoodsProducer job;
+    private GoodsProducer job;
 
-    protected String race;
+    private String race;
+
+    private double money = 5;
 
     public Pop () {
         this.stockpile = new Stockpile();
@@ -37,8 +39,19 @@ public class Pop {
         this.race = race;
     }
 
-    public String toString () {
-        return "Race: " + this.getRace() + "; Stock: " + stockpile + "\n";
+    public double getMoney() {
+        return money;
     }
 
+    public String toString () {
+        return "Race: " + this.getRace() + "; money: " + money + "\n";
+    }
+
+
+    public void subtractMoney(double money) {
+        this.money -= money;
+        if (this.money < 0) {
+            this.money = 0;
+        }
+    }
 }

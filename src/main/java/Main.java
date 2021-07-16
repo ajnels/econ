@@ -15,6 +15,8 @@ public class Main {
         for (Region region : regions) {
             System.out.println(region.getName() + ": Population: " + region.getPops().size() + " work stats: ");
             System.out.println(region.showWorkStats());
+            System.out.println(region.getStockpile() + "\n\n");
+            System.out.println(region.getPops());
         }
     }
 
@@ -129,7 +131,7 @@ public class Main {
                 if (good == null) {
                     break;
                 }
-                goodsConfig.addGood(good.name, good);
+                goodsConfig.addGood(good.getName(), good);
             }
         } catch (Exception exception) {
             System.out.println("Error reading in goods data: " + exception.getMessage());
@@ -196,12 +198,21 @@ public class Main {
     private static void buyNeeds (Pop pop, Stockpile stockpile) {
         PopNeedsConfig popNeedsConfig = PopNeedsConfig.getInstance();
         Set<String> needTypesForPop = popNeedsConfig.getNeedTypesForPop(pop);
+
         for (String needType : needTypesForPop) {
-            double needCurrentStock = pop.stockpile.getStockCount(needType);
-            double needCount        = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
-            if (needCurrentStock <= needCount) {
-                double stockTakenFromPile = stockpile.takeStock(needType, needCount - needCurrentStock);
+            double needCurrentStock        = pop.getStockpile().getStockCount(needType);
+            double needCount               = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
+            double desiredAmountToPurchase = needCount - needCurrentStock;
+
+            double goodPrice            = GoodsConfig.getInstance().getGood(needType).getValue();
+            int maxPurchasableWithMoney = (int) (pop.getMoney() / goodPrice);
+
+            double amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
+
+            if (amountToPurchase > 0) {
+                double stockTakenFromPile = stockpile.takeStock(needType, amountToPurchase);
                 pop.getStockpile().addStock(needType, stockTakenFromPile);
+                pop.subtractMoney(amountToPurchase * goodPrice);
             }
         }
     }
@@ -211,10 +222,20 @@ public class Main {
         Set<String> wantTypesForPop = popWantsConfig.getWantTypesForPop(pop);
 
         for (String wantType : wantTypesForPop) {
-            double wantCount          = popWantsConfig.getConsumeAmountForWant(pop, wantType);
-            double stockTakenFromPile = stockpile.takeStock(wantType, wantCount);
+            double needCurrentStock = pop.getStockpile().getStockCount(wantType);
+            double needCount = popWantsConfig.getConsumeAmountForWant(pop, wantType);
+            double desiredAmountToPurchase = needCount - needCurrentStock;
 
-            pop.getStockpile().addStock(wantType, stockTakenFromPile);
+            double goodPrice = GoodsConfig.getInstance().getGood(wantType).getValue();
+            int maxPurchasableWithMoney = (int) (pop.getMoney() / goodPrice);
+
+            double amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
+
+            if (amountToPurchase > 0) {
+                double stockTakenFromPile = stockpile.takeStock(wantType, amountToPurchase);
+                pop.getStockpile().addStock(wantType, stockTakenFromPile);
+                pop.subtractMoney(amountToPurchase * goodPrice);
+            }
         }
     }
 
@@ -224,7 +245,7 @@ public class Main {
         for (String needType : needTypesForPop) {
             double needConsumeAmount = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
 
-            pop.stockpile.removeStock(needType, needConsumeAmount);
+            pop.getStockpile().removeStock(needType, needConsumeAmount);
         }
     }
 
@@ -234,7 +255,7 @@ public class Main {
         for (String wantType : wantTypesForPop) {
             double wantConsumeAmount = popWantsConfig.getConsumeAmountForWant(pop, wantType);
 
-            pop.stockpile.removeStock(wantType, wantConsumeAmount);
+            pop.getStockpile().removeStock(wantType, wantConsumeAmount);
         }
     }
 }

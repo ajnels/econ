@@ -1,6 +1,8 @@
 public class Good {
 
-    public String name;
+    private String name;
+
+    private double value;
 
     public Good() {}
 
@@ -8,8 +10,20 @@ public class Good {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+
+    }
+
     public String toString() {
         return this.getName();
     }
 
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
 }
