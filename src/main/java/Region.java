@@ -73,7 +73,8 @@ public class Region {
         workStats.append("Employed: ").append(String.format("%,.2f", percentageEmployed)).append(" %\n");
 
         for (GoodsProducer producer : this.goodsProducers) {
-            workStats.append(producer.getName()).append(": ").append(producer.getNumberOfWorkers()).append(" / ").append(producer.getWorkersLimit()).append("  ( ").append((producer.getNumberOfWorkers() / producer.getWorkersLimit()) * 100).append(" % )\n");
+            double percentageOfSlotsEmployed = ((double)producer.getNumberOfWorkers() / producer.getWorkersLimit()) * 100;
+            workStats.append(producer.getName()).append(": ").append(producer.getNumberOfWorkers()).append(" / ").append(producer.getWorkersLimit()).append("  ( ").append(percentageOfSlotsEmployed).append(" % )\n");
         }
         workStats.append("-------------------------------------------------------------------\n");
         return workStats.toString();

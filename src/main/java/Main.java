@@ -16,7 +16,7 @@ public class Main {
             System.out.println(region.getName() + ": Population: " + region.getPops().size() + " work stats: ");
             System.out.println(region.showWorkStats());
             System.out.println(region.getStockpile() + "\n\n");
-            System.out.println(region.getPops());
+            //System.out.println(region.getPops());
         }
     }
 
@@ -183,8 +183,17 @@ public class Main {
             for (GoodsProducer goodsProducer : regionalProducers) {
                 Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
                 for (String neededGood : producerNeeds) {
-                    double neededAmount = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
-                    double amountTakenFromPile = region.getStockpile().takeStock(neededGood, neededAmount);
+                    double needCurrentStock        = goodsProducer.getStockpile().getStockCount(neededGood);
+                    double neededAmount            = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
+                    double desiredAmountToPurchase = neededAmount - needCurrentStock;
+
+                    double goodPrice            = GoodsConfig.getInstance().getGood(neededGood).getValue();
+                    int maxPurchasableWithMoney = (int) (goodsProducer.getMoney() / goodPrice);
+                    double amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
+
+                    double amountTakenFromPile = region.getStockpile().takeStock(neededGood, amountToPurchase);
+
+                    goodsProducer.subtractMoney(amountTakenFromPile * goodPrice);
                     goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
                 }
 

@@ -16,6 +16,8 @@ public class GoodsProducer {
 
     private final double baseProduction = 5;
 
+    private double money = 10;
+
     public boolean isRawExtraction;
 
     public GoodsProducer() {
@@ -101,6 +103,17 @@ public class GoodsProducer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void subtractMoney(double money) {
+        this.money -= money;
+        if (this.money < 0) {
+            this.money = 0;
+        }
     }
 
     public String toString() {

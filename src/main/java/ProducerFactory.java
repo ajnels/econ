@@ -24,6 +24,4 @@ public class ProducerFactory {
         }
         return this.producerMap.get(producedGoodName);
     }
-
-
 }
