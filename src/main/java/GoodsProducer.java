@@ -10,7 +10,7 @@ public class GoodsProducer {
 
     protected Stockpile stockpile;
 
-    public HashMap<String, Double> inputNeeds;
+    public HashMap<String, Integer> inputNeeds;
 
     private ArrayList<Pop> workers;
 
@@ -45,7 +45,16 @@ public class GoodsProducer {
         return (this.isRawExtraction) ? 20 : 10;
     }
 
-    public double produceGoods() {
+    public boolean isRawExtraction() {
+        return isRawExtraction;
+    }
+
+    public ArrayList<Pop> getWorkers() {
+        return this.workers;
+    }
+
+
+    public ArrayList<Good> produceGoods() {
         Set<String> producerNeeds = this.getInputNeeds().keySet();
 
         double lowestRatio = 1;
@@ -62,7 +71,15 @@ public class GoodsProducer {
             }
         }
 
-        return this.workers.size() * this.baseProduction * lowestRatio;
+
+        int amountProduced = (int) (this.workers.size() * this.baseProduction * lowestRatio);
+        ArrayList<Good> producedGoods = new ArrayList<>();
+        for (int i = 0; i < amountProduced; i++) {
+            Good good = new Good(this.getGood().getName());
+            good.setOriginProducer(this);
+            producedGoods.add(good);
+        }
+        return producedGoods;
     }
 
     public boolean hasOpenings() {
@@ -73,23 +90,23 @@ public class GoodsProducer {
         return this.workers.size();
     }
 
-    public HashMap<String, Double> getInputNeeds () {
+    public HashMap<String, Integer> getInputNeeds () {
         return this.inputNeeds;
     }
 
-    public void addInputNeed (Good good, double neededAmount) {
+    public void addInputNeed (Good good, int neededAmount) {
         this.inputNeeds.put(good.getName(), neededAmount);
     }
 
-    public void addInputNeed (String goodName, double neededAmount) {
+    public void addInputNeed (String goodName, int neededAmount) {
         this.inputNeeds.put(goodName, neededAmount);
     }
 
-    public double getNeededAmount(Good good) {
+    public int getNeededAmount(Good good) {
         return this.inputNeeds.get(good.getName());
     }
 
-    public double getNeededAmount(String goodName) {
+    public int getNeededAmount(String goodName) {
         return this.inputNeeds.get(goodName);
     }
 

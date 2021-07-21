@@ -54,4 +54,8 @@ public class Pop {
             this.money = 0;
         }
     }
+
+    public void addMoney (double money) {
+        this.money += money;
+    }
 }

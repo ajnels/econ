@@ -32,7 +32,7 @@ public class PopNeedsConfig {
         return this.needsMap.get(pop.getRace()).keySet();
     }
 
-    public double getConsumeAmountForNeed(Pop pop, String needType) {
+    public int getConsumeAmountForNeed(Pop pop, String needType) {
         return this.needsMap.get(pop.getRace()).get(needType).getConsumeAmount();
     }
 
@@ -50,7 +50,7 @@ public class PopNeedsConfig {
         return this.wantsMap.get(pop.getRace()).keySet();
     }
 
-    public double getConsumeAmountForWant(Pop pop, String needType) {
+    public int getConsumeAmountForWant(Pop pop, String needType) {
         return this.wantsMap.get(pop.getRace()).get(needType).getConsumeAmount();
     }
 }

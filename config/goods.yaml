@@ -2,7 +2,7 @@ name: Grain
 value: 1
 ---
 name: Clothing
-value: 1
+value: 4
 ---
 name: Wool
 value: 1
@@ -11,7 +11,7 @@ name: Cotton
 value: 1
 ---
 name: Tobacco
-value: 1
+value: 2
 ---
 name: Timber
 value: 1
@@ -23,13 +23,13 @@ name: Iron
 value: 1
 ---
 name: Gold
-value: 1
+value: 5
 ---
 name: Bread
-value: 1
+value: 2
 ---
 name: Steel
-value: 1
+value: 3
 ---
 name: Beer
-value: 1
+value: 2

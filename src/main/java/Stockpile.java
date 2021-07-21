@@ -1,64 +1,68 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class Stockpile {
 
-    protected HashMap<String, Double> stockpile = new HashMap<>();
+    protected HashMap<String, ArrayList<Good>> stockpile = new HashMap<>();
 
-    public void addStock (Good good, double amount) {
+    public void addStock (Good good, ArrayList<Good> goods) {
         String goodName = good.getName();
-        this._addStock(goodName, amount);
+        this._addStock(goodName, goods);
     }
 
-    public void addStock (String goodName, double amount) {
-        this._addStock(goodName, amount);
+    public void addStock (String goodName, ArrayList<Good> goods) {
+        this._addStock(goodName, goods);
     }
 
-    private void _addStock(String goodName, double amount) {
+    private void _addStock(String goodName, ArrayList<Good> goods) {
         if (stockpile.containsKey(goodName)) {
-            double currentStock = stockpile.get(goodName);
-            stockpile.put(goodName, currentStock + amount);
+            ArrayList<Good> currentStock = stockpile.get(goodName);
+            currentStock.addAll(goods);
+            stockpile.put(goodName, currentStock);
         } else {
-            stockpile.put(goodName, amount);
+            stockpile.put(goodName, goods);
         }
     }
 
-    public double takeStock (Good good, double amount) {
+    public ArrayList<Good> takeStock (Good good, int amount) {
         String goodName = good.getName();
 
         return _takeStock(goodName, amount);
     }
 
-    public double takeStock (String goodName, double amount) {
+    public ArrayList<Good> takeStock (String goodName, int amount) {
         return _takeStock(goodName, amount);
     }
 
-    public void removeStock (String goodName, double amount) {
+    public void removeStock (String goodName, int amount) {
         _takeStock(goodName, amount);
     }
 
-    private double _takeStock(String goodName, double amountRequested) {
-        double takenAmount = 0.0;
+    private ArrayList<Good> _takeStock(String goodName, int amountRequested) {
+        ArrayList<Good> goodsTaken = new ArrayList<Good>();
         if (!stockpile.containsKey(goodName)) {
-            return takenAmount;
+            return goodsTaken;
         }
 
-        double currentStock = stockpile.get(goodName);
+        ArrayList<Good> goods = stockpile.get(goodName);
 
-        double newAmount = 0;
-        if (currentStock < amountRequested) {
-            takenAmount = currentStock;
+        if (goods.size() < amountRequested) {
+            goodsTaken = goods;
+            stockpile.put(goodName, new ArrayList<Good>());
         } else {
-            takenAmount = amountRequested;
-            newAmount = currentStock - amountRequested;
+            goodsTaken = new ArrayList<Good>(goods.subList(0, amountRequested));
+            goods.removeAll(goodsTaken);
+            stockpile.put(goodName, goods);
         }
-        stockpile.put(goodName, newAmount);
-        return takenAmount;
+
+        return goodsTaken;
     }
 
-    public double getStockCount (String goodType) {
+    public int getStockCount (String goodType) {
         if (this.stockpile.containsKey(goodType)) {
-            return this.stockpile.get(goodType);
+            return this.stockpile.get(goodType).size();
         } else {
             return 0;
         }
@@ -69,7 +73,12 @@ public class Stockpile {
     }
 
     public String toString() {
-        return this.stockpile.toString();
+        StringBuilder summary = new StringBuilder();
+        for (String good : this.getGoodTypes()) {
+            summary.append(good).append(": ");
+            summary.append(this.stockpile.get(good).size()).append("    ");
+        }
+        return summary.append("\n").toString();
     }
 
 

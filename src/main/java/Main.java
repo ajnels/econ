@@ -127,11 +127,13 @@ public class Main {
         try {
             YamlReader reader = new YamlReader(new FileReader("config/goods.yaml"));
             while (true) {
-                Good good = reader.read(Good.class);
-                if (good == null) {
+                HashMap<String, String> goodInfo = (HashMap<String, String>)reader.read();
+                if (goodInfo == null) {
                     break;
                 }
-                goodsConfig.addGood(good.getName(), good);
+                Good good = new Good(goodInfo.get("name"));
+                double defaultValue = Double.parseDouble(goodInfo.get("value"));
+                goodsConfig.addGood(good, defaultValue);
             }
         } catch (Exception exception) {
             System.out.println("Error reading in goods data: " + exception.getMessage());
@@ -183,22 +185,28 @@ public class Main {
             for (GoodsProducer goodsProducer : regionalProducers) {
                 Set<String> producerNeeds = goodsProducer.getInputNeeds().keySet();
                 for (String neededGood : producerNeeds) {
-                    double needCurrentStock        = goodsProducer.getStockpile().getStockCount(neededGood);
-                    double neededAmount            = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
-                    double desiredAmountToPurchase = neededAmount - needCurrentStock;
+                    int needCurrentStock        = goodsProducer.getStockpile().getStockCount(neededGood);
+                    int neededAmount            = goodsProducer.getNeededAmount(neededGood) * goodsProducer.getNumberOfWorkers();
+                    int desiredAmountToPurchase = neededAmount - needCurrentStock;
 
-                    double goodPrice            = GoodsConfig.getInstance().getGood(neededGood).getValue();
+                    double goodPrice            = GoodsConfig.getInstance().getGoodPrice(neededGood);
                     int maxPurchasableWithMoney = (int) (goodsProducer.getMoney() / goodPrice);
-                    double amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
+                    int amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
 
-                    double amountTakenFromPile = region.getStockpile().takeStock(neededGood, amountToPurchase);
+                    ArrayList<Good> goodsTakenFromPile = region.getStockpile().takeStock(neededGood, amountToPurchase);
 
-                    goodsProducer.subtractMoney(amountTakenFromPile * goodPrice);
-                    goodsProducer.getStockpile().addStock(neededGood, amountTakenFromPile);
+                    goodsProducer.subtractMoney(goodsTakenFromPile.size() * goodPrice);
+                    goodsProducer.getStockpile().addStock(neededGood, goodsTakenFromPile);
                 }
 
-                double goodsProducedAmount = goodsProducer.produceGoods();
-                region.getStockpile().addStock(goodsProducer.getGood(), goodsProducedAmount);
+                ArrayList<Good> goodsProduced = goodsProducer.produceGoods();
+                region.getStockpile().addStock(goodsProducer.getGood(), goodsProduced);
+
+                for (Pop worker: goodsProducer.getWorkers()) {
+                    int wage = 3;
+                    goodsProducer.subtractMoney(wage);
+                    worker.addMoney(wage);
+                }
             }
         }
 
@@ -209,17 +217,17 @@ public class Main {
         Set<String> needTypesForPop = popNeedsConfig.getNeedTypesForPop(pop);
 
         for (String needType : needTypesForPop) {
-            double needCurrentStock        = pop.getStockpile().getStockCount(needType);
-            double needCount               = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
-            double desiredAmountToPurchase = needCount - needCurrentStock;
+            int needCurrentStock        = pop.getStockpile().getStockCount(needType);
+            int needCount               = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
+            int desiredAmountToPurchase = needCount - needCurrentStock;
 
-            double goodPrice            = GoodsConfig.getInstance().getGood(needType).getValue();
+            double goodPrice            = GoodsConfig.getInstance().getGoodPrice(needType);
             int maxPurchasableWithMoney = (int) (pop.getMoney() / goodPrice);
 
-            double amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
+            int amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
 
             if (amountToPurchase > 0) {
-                double stockTakenFromPile = stockpile.takeStock(needType, amountToPurchase);
+                ArrayList<Good> stockTakenFromPile = stockpile.takeStock(needType, amountToPurchase);
                 pop.getStockpile().addStock(needType, stockTakenFromPile);
                 pop.subtractMoney(amountToPurchase * goodPrice);
             }
@@ -231,17 +239,17 @@ public class Main {
         Set<String> wantTypesForPop = popWantsConfig.getWantTypesForPop(pop);
 
         for (String wantType : wantTypesForPop) {
-            double needCurrentStock = pop.getStockpile().getStockCount(wantType);
-            double needCount = popWantsConfig.getConsumeAmountForWant(pop, wantType);
-            double desiredAmountToPurchase = needCount - needCurrentStock;
+            int needCurrentStock = pop.getStockpile().getStockCount(wantType);
+            int needCount = popWantsConfig.getConsumeAmountForWant(pop, wantType);
+            int desiredAmountToPurchase = needCount - needCurrentStock;
 
-            double goodPrice = GoodsConfig.getInstance().getGood(wantType).getValue();
+            double goodPrice = GoodsConfig.getInstance().getGoodPrice(wantType);
             int maxPurchasableWithMoney = (int) (pop.getMoney() / goodPrice);
 
-            double amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
+            int amountToPurchase = (desiredAmountToPurchase < maxPurchasableWithMoney) ? desiredAmountToPurchase : maxPurchasableWithMoney;
 
             if (amountToPurchase > 0) {
-                double stockTakenFromPile = stockpile.takeStock(wantType, amountToPurchase);
+                ArrayList<Good> stockTakenFromPile = stockpile.takeStock(wantType, amountToPurchase);
                 pop.getStockpile().addStock(wantType, stockTakenFromPile);
                 pop.subtractMoney(amountToPurchase * goodPrice);
             }
@@ -252,7 +260,7 @@ public class Main {
         PopNeedsConfig popNeedsConfig = PopNeedsConfig.getInstance();
         Set<String> needTypesForPop = popNeedsConfig.getNeedTypesForPop(pop);
         for (String needType : needTypesForPop) {
-            double needConsumeAmount = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
+            int needConsumeAmount = popNeedsConfig.getConsumeAmountForNeed(pop, needType);
 
             pop.getStockpile().removeStock(needType, needConsumeAmount);
         }
@@ -262,7 +270,7 @@ public class Main {
         PopNeedsConfig popWantsConfig = PopNeedsConfig.getInstance();
         Set<String> wantTypesForPop = popWantsConfig.getWantTypesForPop(pop);
         for (String wantType : wantTypesForPop) {
-            double wantConsumeAmount = popWantsConfig.getConsumeAmountForWant(pop, wantType);
+            int wantConsumeAmount = popWantsConfig.getConsumeAmountForWant(pop, wantType);
 
             pop.getStockpile().removeStock(wantType, wantConsumeAmount);
         }

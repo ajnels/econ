@@ -1,9 +1,9 @@
 public class NeedsInfo {
     public String name;
 
-    public double consumeAmount;
+    public int consumeAmount;
 
-    public double getConsumeAmount() {
+    public int getConsumeAmount() {
         return consumeAmount;
     }
 

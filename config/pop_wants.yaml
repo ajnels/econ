@@ -1,31 +1,31 @@
 Human:
   - !NeedsInfo
     name: Tobacco
-    consumeAmount: 2.0
+    consumeAmount: 2
   - !NeedsInfo
     name: Beer
-    consumeAmount: 1.0
+    consumeAmount: 1
 
 Orc:
   - !NeedsInfo
     name: Tobacco
-    consumeAmount: 2.0
+    consumeAmount: 2
   - !NeedsInfo
     name: Beer
-    consumeAmount: 1.0
+    consumeAmount: 1
 
 Naga:
   - !NeedsInfo
     name: Tobacco
-    consumeAmount: 2.0
+    consumeAmount: 2
   - !NeedsInfo
     name: Beer
-    consumeAmount: 1.0
+    consumeAmount: 1
 
 Dwarf:
   - !NeedsInfo
     name: Tobacco
-    consumeAmount: 2.0
+    consumeAmount: 2
   - !NeedsInfo
     name: Beer
-    consumeAmount: 2.0
+    consumeAmount: 2

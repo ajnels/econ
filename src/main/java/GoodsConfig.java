@@ -7,16 +7,20 @@ public class GoodsConfig {
 
     private HashMap<String, Good> goodsMap;
 
+    private HashMap<String, Double> goodsPriceMap;
+
     private GoodsConfig () {
         this.goodsMap = new HashMap<>();
+        this.goodsPriceMap = new HashMap<>();
     }
 
     public static GoodsConfig getInstance() {
         return instance;
     }
 
-    public void addGood (String name, Good good) {
-        this.goodsMap.put(name, good);
+    public void addGood (Good good, double value) {
+        this.goodsMap.put(good.getName(), good);
+        this.goodsPriceMap.put(good.getName(), value);
     }
 
     public Good getGood (String goodName) {
@@ -25,5 +29,9 @@ public class GoodsConfig {
 
     public Collection<Good> getAllGoods() {
         return this.goodsMap.values();
+    }
+
+    public double getGoodPrice (String goodName) {
+        return this.goodsPriceMap.get(goodName);
     }
 }
